@@ -16,6 +16,6 @@ setup(name='preprocess_video',
       author='Kishkun Anastasia',
       author_email='',
       package_dir={},
-      packages=["preprocess"],
+      packages=["preprocess_video"],
       install_requires=install_requires
       )
