@@ -1,4 +1,4 @@
 dlib
 opencv-contrib-python==3.3.0.10
 imutils
-ffmpeg
+ffmpeg-python
