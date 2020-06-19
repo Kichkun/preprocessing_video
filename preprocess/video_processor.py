@@ -1,21 +1,24 @@
 import os
-import imutils
-import ffmpeg
-import dlib
 import random
+
 import cv2
+import dlib
+import ffmpeg
+import imutils
+
 
 class VideoProcessor():
-    def __init__(self, video_file, user_id=None, mark=None, output_folder=None, output_frames=6, shape_predictor='shape_predictor_68_face_landmarks.dat'):
+    def __init__(self, video_file, user_id=None, mark=None, output_folder=None, output_frames=6,
+                 shape_predictor='shape_predictor_68_face_landmarks.dat'):
         # by default video_file name is 'user_id.mp4'
 
-        if user_id==None:
-            self.user_id=os.path.splittext(os.path.basename(video_file))
+        if user_id == None:
+            self.user_id = os.path.splittext(os.path.basename(video_file))
         self.mark = mark
         self.output_frames = output_frames
-        self.frames_to_process = int(output_frames*3.33)
+        self.frames_to_process = int(output_frames * 3.33)
 
-        if output_folder==None:
+        if output_folder == None:
             self.output_folder = os.path.curdir
 
         self.shape_predictor_path = shape_predictor
@@ -58,7 +61,7 @@ class VideoProcessor():
     def soft_detect(self, image, frame):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         faces = self.face_cascade.detectMultiScale(gray, 1.1, 3)
-        widths = [v[2] for v in [f for f in faces] if v[2]>150]
+        widths = [v[2] for v in [f for f in faces] if v[2] > 150]
         if len(widths) < 1:
             return None
         else:
@@ -89,5 +92,5 @@ class VideoProcessor():
         return f'Video failed. {out} frames with faces detected'
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     VideoProcessor('sdfs')
