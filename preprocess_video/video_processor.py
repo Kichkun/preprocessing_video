@@ -38,6 +38,7 @@ class VideoProcessor():
         else:
             self.video_file = video_file
         self.angle = self.check_rotation()
+        self.out = 0
 
     def check_rotation(self):
         meta_dict = ffmpeg.probe(self.video_file)
@@ -59,17 +60,17 @@ class VideoProcessor():
             return None
         else:
             cv2.imwrite(os.path.join(self.output_folder, f'{self.user_id}_{frame}_{self.mark}.jpg'), image)
-        return 1
+            self.out += 1
 
     def soft_detect(self, image, frame):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         faces = self.face_cascade.detectMultiScale(gray, 1.1, 3)
         widths = [v[2] for v in [f for f in faces] if v[2] > 150]
         if len(widths) < 1:
-            return None
+            return 0
         else:
             cv2.imwrite(os.path.join(self.output_folder, f'{self.user_id}_{frame}_{self.mark}.jpg'), image)
-        return 1
+            self.out += 1
 
     def process_video_file(self):
         vidcap = cv2.VideoCapture(self.video_file)
@@ -84,14 +85,12 @@ class VideoProcessor():
                 frame = indexes.index(count)
                 res = self.detect_by_dlib(image, frame)
                 if res is None:
-                    res = self.soft_detect(image, frame)
-                if res != None:
-                    out += 1
-            if out == self.output_frames:
+                    self.soft_detect(image, frame)
+            if self.out == self.output_frames:
                 return 'Video successfully processed'
             success, image = vidcap.read()
             count += 1
-        return f'Video failed. {out} frames with faces detected'
+        return f'Video failed. {self.out} frames with faces detected'
 
 
 if __name__ == "__main__":
