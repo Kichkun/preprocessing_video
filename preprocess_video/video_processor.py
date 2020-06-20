@@ -47,7 +47,7 @@ class VideoProcessor():
         return angle
 
     def rotate_frame(self, image):
-        return imutils.rotate_bound(image, -self.angle)
+        return imutils.rotate_bound(image, int(360-self.angle))
 
     def detect_by_dlib(self, image, frame):
         image = imutils.resize(image, width=240)
@@ -72,7 +72,6 @@ class VideoProcessor():
         vidcap = cv2.VideoCapture(self.video_file)
         length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
         indexes = [random.randint(0, length - 1) for _ in range(self.frames_to_process)]
-
         success, image = vidcap.read()
         count = 0
         out = 0
