@@ -47,7 +47,10 @@ class VideoProcessor():
         return angle
 
     def rotate_frame(self, image):
-        return imutils.rotate_bound(image, int(360-self.angle))
+        if self.angle is not None:
+            return imutils.rotate_bound(image, int(360-self.angle))
+        else:
+            return image
 
     def detect_by_dlib(self, image, frame):
         image = imutils.resize(image, width=240)
