@@ -13,7 +13,7 @@ class VideoProcessor():
         # by default video_file name is 'user_id.mp4'
 
         if user_id == None:
-            self.user_id = os.path.splitext(os.path.basename(video_file))
+            self.user_id = os.path.splitext(os.path.basename(video_file))[0]
         self.mark = mark
         self.output_frames = output_frames
         self.frames_to_process = int(output_frames * 3.33)
