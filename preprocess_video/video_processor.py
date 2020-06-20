@@ -33,7 +33,7 @@ class VideoProcessor():
 
     def rotate_frame(self, image):
         if self.angle is not None:
-            return imutils.rotate_bound(image, int(360 - self.angle))
+            return imutils.rotate_bound(image, self.angle)
         else:
             return image
 
