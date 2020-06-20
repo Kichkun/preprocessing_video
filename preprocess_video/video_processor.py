@@ -8,16 +8,7 @@ import imutils
 
 
 class VideoProcessor():
-    def __init__(self, video_file, user_id=None, mark=None, output_folder=None, output_frames=6,
-                 shape_predictor='shape_predictor_68_face_landmarks.dat'):
-        # by default video_file name is 'user_id.mp4'
-
-        if user_id == None:
-            self.user_id = os.path.splitext(os.path.basename(video_file))[0]
-        self.mark = mark
-        self.output_frames = output_frames
-        self.frames_to_process = int(output_frames * 3.33)
-
+    def __init__(self, output_folder=None, shape_predictor='shape_predictor_68_face_landmarks.dat'):
         if output_folder == None:
             self.output_folder = os.path.curdir
 
@@ -33,13 +24,6 @@ class VideoProcessor():
         haar_model = os.path.join(cv2_base_dir, 'data/haarcascade_frontalface_default.xml')
         self.face_cascade = cv2.CascadeClassifier(haar_model)
 
-        if not os.path.exists(video_file):
-            raise FileNotFoundError
-        else:
-            self.video_file = video_file
-        self.angle = self.check_rotation()
-        self.out = 0
-
     def check_rotation(self):
         meta_dict = ffmpeg.probe(self.video_file)
         angle = None
@@ -49,7 +33,7 @@ class VideoProcessor():
 
     def rotate_frame(self, image):
         if self.angle is not None:
-            return imutils.rotate_bound(image, int(360-self.angle))
+            return imutils.rotate_bound(image, int(360 - self.angle))
         else:
             return image
 
@@ -72,13 +56,30 @@ class VideoProcessor():
             cv2.imwrite(os.path.join(self.output_folder, f'{self.user_id}_{frame}_{self.mark}.jpg'), image)
             self.out += 1
 
-    def process_video_file(self):
+    def process_video_file(self, video_file, user_id=None, mark=None, output_frames=6, output_folder=None):
+        # by default video_file name is 'user_id.mp4'
+
+        if user_id == None:
+            self.user_id = os.path.splitext(os.path.basename(video_file))[0]
+        self.mark = mark
+        self.output_frames = output_frames
+        self.frames_to_process = int(output_frames * 3.33)
+
+        if output_folder == None:
+            self.output_folder = os.path.curdir
+
+        if not os.path.exists(video_file):
+            raise FileNotFoundError
+        else:
+            self.video_file = video_file
+        self.angle = self.check_rotation()
+        self.out = 0
+
         vidcap = cv2.VideoCapture(self.video_file)
         length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
         indexes = [random.randint(0, length - 1) for _ in range(self.frames_to_process)]
         success, image = vidcap.read()
         count = 0
-        out = 0
         while success:
             if count in indexes:
                 image = self.rotate_frame(image)
@@ -91,7 +92,3 @@ class VideoProcessor():
             success, image = vidcap.read()
             count += 1
         return f'Video failed. {self.out} frames with faces detected'
-
-
-if __name__ == "__main__":
-    VideoProcessor('sdfs')
